@@ -78,7 +78,7 @@ acfma2 <- ARMAacf(ma=c(1.2,-.7),lag.max=10)
 plot(lags,acfma2,type="h",main="ACF for MA(2) with theta1=1.2 and theta2=-0.7")
 ```
 
-# Q1 a)
+# Q1 b)
 The simulation and related R program is given below:
 ```{r}
 par(mfrow=c(3,3))
@@ -98,8 +98,3 @@ acf(t2,lag.max=10)
 acfma3 <- ARMAacf(ma=c(-1,-.6),lag.max=10)
 plot(lags,acfma2,type="h")
 ```
-
-
-
-
-
