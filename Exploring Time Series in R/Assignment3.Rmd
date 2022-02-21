@@ -2,8 +2,9 @@
 title: "R Notebook"
 output: html_notebook
 Developer: Yogesh Awdhut Gadade
+Date: 21st Feb 2022
 ---
-# a)
+# Q1 a)
 ```{r}
 acfma2=ARMAacf(ma=c(0.5,0.4), lag.max=10) # 10 lags of ACF for MA(2) with theta1 = 0.5 theta2 = 0.4
 acfma2
@@ -67,7 +68,7 @@ acf(x, xlim=c(1,10), main="ACF for simulated MA(2) Data")
 
 
 # ############# Method 2 
-
+# Q1 a)
 ```{r}
 par(mfrow=c(3,1))
 acfma1 <- ARMAacf(ma=c(0.5,0.4),lag.max=10)
@@ -76,8 +77,9 @@ plot(lags,acfma1,type="h",main="ACF for MA(2) with theta1=0.5 and theta2=0.4")
 acfma2 <- ARMAacf(ma=c(1.2,-.7),lag.max=10)
 plot(lags,acfma2,type="h",main="ACF for MA(2) with theta1=1.2 and theta2=-0.7")
 ```
-The simulation and related R program is given below:
 
+# Q1 a)
+The simulation and related R program is given below:
 ```{r}
 par(mfrow=c(3,3))
 acfma1 <- ARMAacf(ma=c(0.5,0.4),lag.max=10)
