@@ -1,0 +1,75 @@
+---
+title: "R Notebook"
+output: html_notebook
+Developer: Yogesh Awdhut Gadade
+Date: 14th Feb 2022
+Assignment 2
+---
+
+
+# a
+```{r}
+data("winnebago")
+plot(winnebago, type='l', ylab="sales-monthly")
+points(y = winnebago, x = time(winnebago), pch = as.vector(season(winnebago)))
+
+```
+
+
+
+
+
+```{r}
+rm(list=ls())
+install.packages("TSA")
+library(TSA)
+data("SP")
+d=SP
+class(d)
+plot(d,xlab="year",ylab="standard and poors composite index",main="Time Series plot")
+```
+
+
+
+# b)
+
+```{r}
+#Using least squares
+winnebago.lm = lm(winnebago ~ time(winnebago))
+summary(winnebago.lm)
+
+```
+
+
+
+
+```{r}
+d1=log(d)
+d1
+plot(d1,xlab="year",ylab="log transform data",main="Time Series plot")
+```
+
+```{r}
+#Using least squares
+d1.lm = lm(d1 ~ time(d1))
+summary(d1.lm)
+
+```
+
+
+
+#Q3
+
+```{r}
+#plotting the residuals 
+plot(y = rstandard(d1.lm), x = as.vector(time(d1)), type = 'o')
+points(y = rstandard(d1.lm), x = as.vector(time(d1)), pch = as.vector(season(d1)))
+```
+
+
+#Q4
+
+```{r}
+d3=diff(log(d))
+plot(d3,xlab="year",ylab="difference of log transform",main="Time Series plot")
+```
