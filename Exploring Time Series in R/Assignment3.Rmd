@@ -1,0 +1,35 @@
+---
+title: "R Notebook"
+output: html_notebook
+Developer: Yogesh Awdhut Gadade
+---
+
+```{r}
+acfma2=ARMAacf(ma=c(0.5,0.4), lag.max=10)
+acfma2
+```
+
+
+```{r}
+lags=0:10
+plot(lags,acfma2,xlim=c(1,10), ylab="r",type="h", main = "ACF for MA(2) with theta1 = 0.5,theta2=0.3")
+abline(h=0)
+```
+
+
+```{r}
+xc=arima.sim(n=150, list(ma=c(0.5, 0.4)))
+x=xc+10
+plot(x, type="b", main = "Simulated MA(2) Series")
+```
+
+
+```{r}
+acf(x, xlim=c(1,10), main="ACF for simulated MA(2) Data")
+```
+
+
+
+
+
+
