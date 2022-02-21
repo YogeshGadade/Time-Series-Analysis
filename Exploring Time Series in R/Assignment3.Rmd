@@ -74,27 +74,36 @@ par(mfrow=c(3,1))
 acfma1 <- ARMAacf(ma=c(0.5,0.4),lag.max=10)
 lags <- 0:10
 plot(lags,acfma1,type="h",main="ACF for MA(2) with theta1=0.5 and theta2=0.4")
-acfma2 <- ARMAacf(ma=c(1.2,-.7),lag.max=10)
-plot(lags,acfma2,type="h",main="ACF for MA(2) with theta1=1.2 and theta2=-0.7")
-```
 
-# Q1 b)
-The simulation and related R program is given below:
+```
 ```{r}
 par(mfrow=c(3,3))
 acfma1 <- ARMAacf(ma=c(0.5,0.4),lag.max=10)
 lags <- 0:10
 plot(lags,acfma1,type="h")
-t1 <- arima.sim(n = 100, list(ma = c(0.5, 0.4)))
-t2 <- arima.sim(n = 100, list(ma = c(0.5, 0.4)))
+t1 <- arima.sim(n = 150, list(ma = c(0.5, 0.4)))
+t2 <- arima.sim(n = 150, list(ma = c(0.5, 0.4)))
 acf(t1,lag.max=10)
 acf(t2,lag.max=10)
+```
+
+# Q1 b)
+```{r}
+par(mfrow=c(3,1))
+lags <- 0:10
+acfma2 <- ARMAacf(ma=c(1.2,-.7),lag.max=10)
+plot(lags,acfma2,type="h",main="ACF for MA(2) with theta1=1.2 and theta2=-0.7")
+```
+
+```{r}
+par(mfrow=c(3,3))
+lags <- 0:10
 acfma2 <- ARMAacf(ma=c(1.2,-.7),lag.max=10)
 plot(lags,acfma2,type="h")
-t1 <- arima.sim(n = 100, list(ma = c(1.2, -0.7)))
-t2 <- arima.sim(n = 100, list(ma = c(1.2, -0.7)))
+t1 <- arima.sim(n = 150, list(ma = c(1.2, -0.7)))
+t2 <- arima.sim(n = 150, list(ma = c(1.2, -0.7)))
 acf(t1,lag.max=10)
 acf(t2,lag.max=10)
-acfma3 <- ARMAacf(ma=c(-1,-.6),lag.max=10)
 plot(lags,acfma2,type="h")
 ```
+
