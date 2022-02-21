@@ -3,22 +3,22 @@ title: "R Notebook"
 output: html_notebook
 Developer: Yogesh Awdhut Gadade
 ---
-
+# Q 1 a)
 ```{r}
 acfma2=ARMAacf(ma=c(0.5,0.4), lag.max=10) # 10 lags of ACF for MA(2) with theta1 = 0.5 theta2 = 0.4
 acfma2
 ```
 
-# The first command determines the ACF and stores it in an object named acfma2 (our choice of name). 
-# Printed numerical values of the ACF simply use the command acfma2.
+The first command determines the ACF and stores it in an object named acfma2 (our choice of name). 
+Printed numerical values of the ACF simply use the command acfma2.
 
 ```{r}
 lags=0:10                       #creates a variable named lags that ranges from 0 to 10.
 plot(lags,acfma2,xlim=c(1,10), ylab="r",type="h", main = "ACF for MA(2) with theta1 = 0.5,theta2=0.4")
 abline(h=0)                     #adds a horizontal axis to the plot
 ```
-# The above plot command plots lags versus the ACF values for lags 1 to 10. 
-# The ylab parameter labels the y-axis and the "main" parameter puts a title on the plot.
+The above plot command plots lags versus the ACF values for lags 1 to 10. 
+The ylab parameter labels the y-axis and the "main" parameter puts a title on the plot.
 
 #The simulation and plots were done with the following commands:
 ```{r}
