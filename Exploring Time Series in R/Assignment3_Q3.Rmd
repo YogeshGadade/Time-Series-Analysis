@@ -1,0 +1,101 @@
+---
+title: "R Notebook"
+output:
+  word_document: default
+  html_notebook: default
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+# ------------------------ Q3 d) --------------------------
+### simulate 150 observations for three AR(2) models with differnt phi values: 
+### a) phi1=0.6, phi2=0.3
+### b) phi1=-0.4, phi2=0.5
+### c) phi1=1.2, phi2=-0.7
+### Hint: You may use polyroot function in R to find roots of a polynomial.
+
+### (d) Simulate each the models in (a)-(c) with 150 observations, and plot theirs series, and their sample ACF.
+
+
+```{r}
+# For a) AR(2) with phi1=0.6, phi2=0.3
+xc=arima.sim(n=150, list(ar=c(0.6, 0.3))) 
+#simulated n = 150 values from this model and plotted the sample time series and the sample ACF for the simulated data.
+x=xc+10               # adds 10 to make mean = 10. Simulation defaults to mean = 0.
+plot(x, type="b", main = "Simulated AR(2) Series with phi1=0.6, phi2=0.3 and n = 150 observation") 
+#The above plot command plots lags versus the ACF values for lags 1 to 10. The ylab parameter labels the y-axis and the "main" parameter puts a title on the plot.
+
+```
+
+```{r}
+# Draw ACF plot for AR(2) model
+acf(x, xlim=c(1,10), main="ACF for simulated AR(2) Data with phi1=0.6, phi2=0.3 and n = 150 observation")
+```
+
+
+```{r}
+# For b) AR(2) with phi1=-0.4, phi2=0.5
+xc=arima.sim(n=150, list(ar=c(-0.4, 0.5))) 
+#simulated n = 150 values from this model and plotted the sample time series and the sample ACF for the simulated data.
+x=xc+10               # adds 10 to make mean = 10. Simulation defaults to mean = 0.
+plot(x, type="b", main = "Simulated AR(2) Series with phi1=-0.4, phi2=0.5 and n = 150 observation") 
+#The above plot command plots lags versus the ACF values for lags 1 to 10. The ylab parameter labels the y-axis and the "main" parameter puts a title on the plot.
+
+```
+
+```{r}
+# Draw ACF plot for AR(2) model
+acf(x, xlim=c(1,10), main="ACF for simulated AR(2) Data with phi1=-0.4, phi2=0.5 and n = 150 observation")
+```
+
+
+
+
+```{r}
+# For c) AR(2) with phi1=1.2, phi2=-0.7
+xc=arima.sim(n=150, list(ar=c(1.2, -0.7))) 
+#simulated n = 150 values from this model and plotted the sample time series and the sample ACF for the simulated data.
+x=xc+10               # adds 10 to make mean = 10. Simulation defaults to mean = 0.
+plot(x, type="b", main = "Simulated AR(2) Series with phi1=1.2, phi2=-0.7 and n = 150 observation") 
+#The above plot command plots lags versus the ACF values for lags 1 to 10. The ylab parameter labels the y-axis and the "main" parameter puts a title on the plot.
+
+```
+
+
+```{r}
+# Draw ACF plot for AR(2) model
+acf(x, xlim=c(1,10), main="ACF for simulated AR(2) Data with phi1=1.2, phi2=-0.7 and n = 150 observation")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

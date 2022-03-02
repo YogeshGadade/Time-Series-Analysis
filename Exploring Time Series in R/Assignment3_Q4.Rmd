@@ -1,0 +1,223 @@
+---
+title: "R Notebook"
+output: html_notebook
+Author: Yogesh Awdhut Gadade
+---
+### Q4 Sketch the autocorrelation functions for each of the following ARMA models:
+### (a) ARMA(1,1), with phi = 0.7 and theta = 0.4
+### (b) ARMA(1,1) with phi = 0.7 and theta = -0.4
+### Hint: Like question 1., you can use ARMAacf function.
+
+### (c) Simulate each the models in (a)-(b) with 150 observations, and plot theirs series, and their sample ACF.
+
+### Q4 a)  phi = 0.7 and theta = 0.4
+
+```{r}
+acfma2=ARMAacf(ar=0.7, ma=0.4, lag.max=10) # 10 lags of ACF for ARMA(1, 1) with phi = 0.7 and theta = 0.4
+acfma2
+```
+```{r}
+lags=0:10                       #creates a variable named lags that ranges from 0 to 10.
+plot(lags,acfma2,xlim=c(1,10), ylab="r",type="h", main = "ACF for ARMA(1, 1) with phi = 0.7 and theta = 0.4")
+abline(h=0)                     #adds a horizontal axis to the plot
+```
+### Q4 (b) ARMA(1,1) with phi = 0.7 and theta = -0.4
+```{r}
+acfma2=ARMAacf(ar=0.7, ma=-0.4, lag.max=10) # 10 lags of ACF for ARMA(1, 1) with phi = 0.7 and theta = 0.4
+acfma2
+```
+```{r}
+lags=0:10                       #creates a variable named lags that ranges from 0 to 10.
+plot(lags,acfma2,xlim=c(1,10), ylab="r",type="h", main = "ACF for ARMA(1, 1) with phi = 0.7 and theta = 0.4")
+abline(h=0)                     #adds a horizontal axis to the plot
+```
+### (c) Simulate each the models in (a)-(b) with 150 observations, and plot theirs series, and their sample ACF.
+```{r}
+### a) phi = 0.7 and theta = 0.4
+xc=arima.sim(n=150, list(ma=c(0.7,0.4)))
+x=xc+10               # adds 10 to make mean = 10. Simulation defaults to mean = 0.
+plot(x, type="b", main = "Simulated ARMA(1, 1) Series with phi = 0.7 and theta = 0.4")
+```
+```{r}
+acf(x, xlim=c(1,10), main="ACF for simulated ARMA(1, 1) Data Series with phi = 0.7 and theta = 0.4")
+
+```
+#### Observation: As it can be seen here that some of the bars are going out side the confidance area hence it is non-stationary
+
+
+```{r}
+### b) phi = 0.7 and theta = -0.4
+xc=arima.sim(n=150, list(ma=c(0.7,-0.4)))
+x=xc+10               # adds 10 to make mean = 10. Simulation defaults to mean = 0.
+plot(x, type="b", main = "Simulated ARMA(1, 1) Series with phi = 0.7 and theta = -0.4")
+```
+```{r}
+acf(x, xlim=c(1,10), main="ACF for simulated ARMA(1, 1) Data Series with phi = 0.7 and theta = -0.4")
+
+```
+#### Observation: It can be seen that some of the bars are outside the confidance area hence we can say that its non-stationary
+
+
+
+
+#### Exploring other methods: ( Can be removed - experimenting )
+
+
+# ------------------------ Q4 Method 1 --------------------------
+
+### Q4
+### Sketch the autocorrelation functions for each of the following ARMA models:
+### (a) ARMA(1,1) with phi = 0.7 and theta = 0.4.
+### (b) ARMA(1,1) with phi = 0.7 and theta = -0.4.
+### (a) ARMA(1,1) with phi = 0.7 and theta = 0.4. Solution:
+
+### Q4 (a) ARMA(1,1) with phi = 0.7 and theta = 0.4.
+```{r}
+a1 <- list();        # created a1 list
+a1 <- append(a1,0)
+a1
+```
+
+```{r}
+noise <- rnorm(5000) #simulates random variate having a specified normal distribution.
+noise[1:10]
+```
+
+```{r}
+for (i in 2:500){
+  a1 <- append(a1, (a1[[i-1]]*.7 + noise[i]) + (noise[i] - .4*noise[i-1]));
+}
+a1 <- unlist(a1)   # unlist function used to convert a list to vector
+plot(a1, type="o", col="orange")
+```
+
+```{r}
+acf(a1)
+```
+
+### Q4 (b) ARMA(1,1) with phi = 0.7 and theta = −0.4. Solution:Similarly
+
+```{r}
+a2 <- list();
+a2 <- append(a2,0)
+for (i in 2:500){
+  a2 <- append(a2,(a2[[i-1]]*.7 + noise[i]) + (noise[i] - (-.4*noise[i-1])));
+}
+a2 <- unlist(a2)
+plot(a2, type="o", col="orange")
+```
+
+```{r}
+acf(a2)
+```
+
+# ------------------------ Q4 Method 2 --------------------------
+
+###################################################### 
+
+### Time Series Analysis
+### Yogesh Awdhut Gadade
+### Objective - Investigate ARMA models
+
+###################################################### 
+
+```{r}
+rm(list=ls())
+options(width=200)
+# install if not present
+#install.packages("astsa")
+```
+
+```{r}
+#library(astsa)
+cat(" Investigate ARMA models\n\n", "Last modification:",date(),'\n')
+```
+
+###################################################### 
+
+###################################################### 
+
+# Sketch the autocorrelation functions for each of the following ARMA models:
+
+# (a) ARMA(1,1) with φ = 0.7 and θ = 0.4.
+
+# (b) ARMA(1,1) with φ = 0.7 and θ = −0.4.
+
+# Hint: Like question 1., you can use ARMAacf function. (c) Simulate each the
+
+# models in (a)-(b) with 150 observations, and plot theirs series, and their sample ACF.
+
+```{r}
+#  (a) ARMA(1,1) with φ = 0.7 and θ = 0.4.
+ARMA11 <- arima.sim(model=list(ar=.7,ma=.4),n=150)
+#ARMA01 <- arima.sim(model=list(ma=.7),n=150)
+#ARMA10 <- arima.sim(model=list(ar=.4),n=150)
+plot(ARMA11, type="o", col="orange")
+```
+
+```{r}
+#
+# compute ACF for 
+#
+ARMA11.acf <- acf(ARMA11,plot=F)
+#ARMA01.acf <- acf(ARMA01,plot=F)
+#ARMA10.acf <- acf(ARMA10,plot=F)
+#
+# compute theoretical ACFs for all models
+#
+acf.11 <- ARMAacf(ar=.7,ma=.4,lag.max=20)     ## Example from Brockwell & Davis
+#acf.01 <- ARMAacf(ma=.7,lag.max=20)
+#acf.10 <- ARMAacf(ar=.4,lag.max=20)
+#
+# plot against each other
+#
+plot(ARMA11.acf)
+#lines(ARMA11.acf$lag,acf.11)
+```
+
+```{r}
+#  (b) ARMA(1,1) with φ = 0.7 and θ = -0.4.
+ARMA11 <- arima.sim(model=list(ar=.7,ma=-.4),n=150)
+plot(ARMA11, type="o", col="orange")
+```
+
+```{r}
+# compute ACF for 
+ARMA11.acf <- acf(ARMA11,plot=F)
+# compute theoretical ACFs for all models
+acf.11 <- ARMAacf(ar=.7,ma=-.4,lag.max=20)
+# plot against each other
+plot(ARMA11.acf)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

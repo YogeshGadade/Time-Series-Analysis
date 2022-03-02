@@ -1,74 +1,87 @@
 ---
 title: "R Notebook"
 output: html_notebook
-Developer: Yogesh Awdhut Gadade
-Date: 21st Feb 2022
+#Developer: Yogesh Awdhut Gadade
+#Date: 21st Feb 2022
 ---
+
+```{r}
+#install.packages("knite")
+#setwd("C:/Program Files/R/R-4.1.2/library")
+#update.packages()
+#update.packages(checkBuilt=TRUE, ask=FALSE)
+```
+
 # Q1 a)
+
 ```{r}
 acfma2=ARMAacf(ma=c(0.5,0.4), lag.max=10) # 10 lags of ACF for MA(2) with theta1 = 0.5 theta2 = 0.4
 acfma2
 ```
 
-The first command determines the ACF and stores it in an object named acfma2 (our choice of name). 
-Printed numerical values of the ACF simply use the command acfma2.
+```{r}
+
+```
+
+The first command determines the ACF and stores it in an object named acfma2 (our choice of name). Printed numerical values of the ACF simply use the command acfma2.
 
 ```{r}
 lags=0:10                       #creates a variable named lags that ranges from 0 to 10.
 plot(lags,acfma2,xlim=c(1,10), ylab="r",type="h", main = "ACF for MA(2) with theta1 = 0.5,theta2=0.4")
 abline(h=0)                     #adds a horizontal axis to the plot
 ```
-The above plot command plots lags versus the ACF values for lags 1 to 10. 
-The ylab parameter labels the y-axis and the "main" parameter puts a title on the plot.
+
+The above plot command plots lags versus the ACF values for lags 1 to 10. The ylab parameter labels the y-axis and the "main" parameter puts a title on the plot.
 
 The simulation and plots were done with the following commands:
+
 ```{r}
 xc=arima.sim(n=150, list(ma=c(0.5, 0.4)))
 x=xc+10               # adds 10 to make mean = 10. Simulation defaults to mean = 0.
 plot(x, type="b", main = "Simulated MA(2) Series")
 ```
-simulated n = 150 values from this model and plotted the sample time series and the sample ACF for the simulated data. 
+
+simulated n = 150 values from this model and plotted the sample time series and the sample ACF for the simulated data.
 
 ```{r}
 acf(x, xlim=c(1,10), main="ACF for simulated MA(2) Data")
 ```
 
-
-
 # Q1 b)
+
 ```{r}
 acfma2=ARMAacf(ma=c(1.2,-0.7), lag.max=10) # 10 lags of ACF for MA(2) with theta1 = 0.5 theta2 = 0.4
 acfma2
 ```
 
-The first command determines the ACF and stores it in an object named acfma2 (our choice of name). 
-Printed numerical values of the ACF simply use the command acfma2.
+The first command determines the ACF and stores it in an object named acfma2 (our choice of name). Printed numerical values of the ACF simply use the command acfma2.
 
 ```{r}
 lags=0:10                       #creates a variable named lags that ranges from 0 to 10.
 plot(lags,acfma2,xlim=c(1,10), ylab="r",type="h", main = "ACF for MA(2) with theta1 = 1.2, theta2=-0.7")
 abline(h=0)                     #adds a horizontal axis to the plot
 ```
-The above plot command plots lags versus the ACF values for lags 1 to 10. 
-The ylab parameter labels the y-axis and the "main" parameter puts a title on the plot.
+
+The above plot command plots lags versus the ACF values for lags 1 to 10. The ylab parameter labels the y-axis and the "main" parameter puts a title on the plot.
 
 The simulation and plots were done with the following commands:
+
 ```{r}
 xc=arima.sim(n=150, list(ma=c(1.2,-0.7)))
 x=xc+10               # adds 10 to make mean = 10. Simulation defaults to mean = 0.
 plot(x, type="b", main = "Simulated MA(2) Series")
 ```
-simulated n = 150 values from this model and plotted the sample time series and the sample ACF for the simulated data. 
+
+simulated n = 150 values from this model and plotted the sample time series and the sample ACF for the simulated data.
 
 ```{r}
 acf(x, xlim=c(1,10), main="ACF for simulated MA(2) Data")
 ```
 
+# \############# Method 2
 
-
-
-# ############# Method 2 
 # Q1 a)
+
 ```{r}
 par(mfrow=c(3,1))
 acfma1 <- ARMAacf(ma=c(0.5,0.4),lag.max=10)
@@ -76,6 +89,7 @@ lags <- 0:10
 plot(lags,acfma1,type="h",main="ACF for MA(2) with theta1=0.5 and theta2=0.4")
 
 ```
+
 ```{r}
 par(mfrow=c(3,3))
 acfma1 <- ARMAacf(ma=c(0.5,0.4),lag.max=10)
@@ -88,6 +102,7 @@ acf(t2,lag.max=10)
 ```
 
 # Q1 b)
+
 ```{r}
 par(mfrow=c(3,1))
 lags <- 0:10
@@ -106,4 +121,3 @@ acf(t1,lag.max=10)
 acf(t2,lag.max=10)
 plot(lags,acfma2,type="h")
 ```
-
