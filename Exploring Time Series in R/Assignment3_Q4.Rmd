@@ -23,12 +23,12 @@ abline(h=0)                     #adds a horizontal axis to the plot
 ```
 ### Q4 (b) ARMA(1,1) with phi = 0.7 and theta = -0.4
 ```{r}
-acfma2=ARMAacf(ar=0.7, ma=-0.4, lag.max=10) # 10 lags of ACF for ARMA(1, 1) with phi = 0.7 and theta = 0.4
+acfma2=ARMAacf(ar=0.7, ma=-0.4, lag.max=10) # 10 lags of ACF for ARMA(1, 1) with phi = 0.7 and theta = -0.4
 acfma2
 ```
 ```{r}
 lags=0:10                       #creates a variable named lags that ranges from 0 to 10.
-plot(lags,acfma2,xlim=c(1,10), ylab="r",type="h", main = "ACF for ARMA(1, 1) with phi = 0.7 and theta = 0.4")
+plot(lags,acfma2,xlim=c(1,10), ylab="r",type="h", main = "ACF for ARMA(1, 1) with phi = 0.7 and theta = -0.4")
 abline(h=0)                     #adds a horizontal axis to the plot
 ```
 ### (c) Simulate each the models in (a)-(b) with 150 observations, and plot theirs series, and their sample ACF.

@@ -1,0 +1,115 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+### Date: 20-3-2022
+# Yogesh Awdhut Gadade
+
+
+The data file winnebago contains monthly unit sales of recreational vehicles (RVs) from Winnebago, Inc., from November 1966 through February 1972.
+
+(a) Display and interpret the time series plot for these data.
+
+(b) Now take natural logarithms of the monthly sales figures and display the time series plot of the transformed values. Describe the effect of the logarithms on the behavior of the series.
+
+(c) Calculate the fractional relative changes, (Yt − Yt−1)/Yt−1, and compare them with the differences of (natural) logarithms, ▽log(Yt) = log(Yt)−log(Yt−1). How do they compare for smaller values and for larger values?
+
+
+Answer:
+
+(a) Display and interpret the time series plot for these data.
+
+```{r}
+library(TSA)
+data("winnebago")
+winnebago
+```
+```{r}
+typeof(winnebago)
+```
+```{r, dev.new(height=5, width=6)}
+plot(winnebago, type='l', ylab='sales-monthly')
+points(y=winnebago,x=time(winnebago),pch=as.vector(season(winnebago)))
+```
+
+(b) Now take natural logarithms of the monthly sales figures and display the time series plot of the transformed values. Describe the effect of the logarithms on the behavior of the series.
+
+
+Using log function on y values as follows:
+```{r, dev.new(height=6, width=10)}
+#take natural logarithms of the monthly sales
+plot(log(winnebago), type = 'l')
+logYSeries=log(winnebago)
+points(y = logYSeries, x = time(winnebago), pch = as.vector(season(winnebago)))
+```
+
+(c) Calculate the fractional relative changes, (Yt − Yt−1)/Yt−1, and compare them with the differences of (natural) logarithms, ▽log(Yt) = log(Yt)−log(Yt−1). How do they compare for smaller values and for larger values?
+
+```{r}
+# Fractional Relative changes
+SerRelativeChange <- diff(logYSeries)/logYSeries
+plot(SerRelativeChange, ylab="Fractional Relative Change", main="Time Series Plot with Relative change")
+points(y=SerRelativeChange, x=time(SerRelativeChange), pch=as.vector(season(SerRelativeChange)))
+```
+From the above graph it can be seen that after taking fractional relative change the series becomes stationary.
+```{r}
+#Difference of log transformation:
+SerDifferenceOfLog = diff(logYSeries)
+plot(SerDifferenceOfLog, ylab="Difference of Log transformation", main="Time Series Plot with difference of log transformation")
+points(y=SerDifferenceOfLog, x=time(SerDifferenceOfLog), pch=as.vector(season(SerDifferenceOfLog)))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
