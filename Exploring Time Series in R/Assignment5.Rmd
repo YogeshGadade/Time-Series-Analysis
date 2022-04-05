@@ -1,0 +1,168 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+# Yogesh Awdhut Gadade
+# Date: 4th April 2022
+
+
+# Q Simulate an AR(2) time series of length n = 72 with phi1 = 0:7 and phi2 = -0:4.
+# (a) Calculate and plot the theoretical autocorrelation function for this model. Plot
+# sufficient lags until the correlations are negligible.
+# (b) Calculate and plot the sample ACF for your simulated series. How well do the
+# values and patterns match the theoretical ACF from part (a)?
+# (c) What are the theoretical partial autocorrelations for this model?
+
+
+# Simulate an AR(2) time series of length n = 72 with φ1 = 0.7 and φ2 = −0.4.
+```{r}
+set.seed(3) # setting seed
+AR2=ar.sim <- arima.sim(model=list(ar=c(0.7, -0.4)), n=72)
+AR2
+```
+# Plotting above points
+```{r}
+plot(AR2)
+```
+#(a) Calculate and plot the theoretical autocorrelation function for this model. Plot sufficient lags until the correlations are negligible.
+
+# Here in the 1st image I have simulated the time series model for you. I have done the whole analysis in R and so the R code is also provided below in the 
+# left part of the image. One can use any tool to do the same. Since we are simulating random normal distribution of 72 variables you 
+# may get some what diferent graph but no need to panic since the random numbers may differer from system to system.
+
+# Calculating theoritical ACF 
+```{r}
+ARMAacf(c(0.7, -0.4), lag.max=15, pacf=FALSE)
+```
+# b) Calculate and plot the sample ACF for your simulated series. How well do the
+# values and patterns match the theoretical ACF from part (a)? 
+# Plot of the ACF
+```{r}
+ar.acf=acf(ar.sim, plot=T)
+```
+# (c) What are the theoretical partial autocorrelations for this model?
+# Plot of the PACF Calculating theoritical PACF
+```{r}
+ARMAacf(c(0.7, -0.4), lag.max=15, pacf=TRUE)
+```
+# (d) Calculate and plot the sample PACF for your simulated series. How well do the values and patterns match the theoretical ACF from part (c)?
+```{r}
+ar.acf <- acf(ar.sim, type="partial", plot=TRUE)
+```
+# Here PACF is having importance to make decision to find the number of lags and the PACF of +/- 0.22 indicates the blue boundry below which the lags are not 
+# significant which indeed states that it's a 2 lag AR process since we have only 2 lags which are cutting the blue line of PACF. You don't consider ACF here since it has correlation effect of 2nd event on the 3rd and so on and so we take our decision based upon the PACF for AR series.
+
+
+
+# ----------------------- Q 7 -------------------------
+
+# 7. Simulate an MA(2) time series of length n = 36 with θ1 = 0.7 and θ2 = −0.4.
+```{r}
+set.seed(3) # setting seed
+ma.sim<-arima.sim(model=list(ma=c(.7,-.4)),n=36)
+#Visualize the time series plot
+plot(ma.sim)
+```
+# (a) What are the theoretical autocorrelations for this model?
+AR1 (auto-correlation with 1st order lag)=(θ1 + θ1*θ2)/ (1 + θ1^2 +θ2^2) = (0.7+0.4*.7)/(1 + 0.7^2+.4^2) = 0.594
+AR2 (auto-correlation with 2nd order lag)=(θ2)/ (1 + θ1^2 +θ1^2) = (0.4)/(1 + 0.7^2+.4^2) = 0.667 = 0.242
+```{r}
+ARMAacf(c(0.7, -0.4), lag.max=15, pacf=FALSE)
+```
+
+
+# (b) Calculate and plot the sample ACF for your simulated series. How well do the values and patterns match the theoretical ACF from part (a)?
+```{r}
+acf=acf(ma.sim)
+```
+#ACF values
+```{r}
+acf$acf
+```
+# (c) Calculate and plot the theoretical partial autocorrelation function for this
+# model. Plot sufficient lags until the correlations are negligible. (Hint: 
+# See Equation (6.2.6) on page 114.)
+#PACF plots
+```{r}
+pacf=pacf(ma.sim)
+```
+
+# (d) Calculate and plot the sample PACF for your simulated series. How well do
+# the values and patterns match the theoretical ACF from part (c)?
+#ACF values
+```{r}
+acf$acf
+```
+
+
+
+# ---------------------------- Q9 -------------------------
+# 9. The data file named robot contains a time series obtained from an industrial robot.
+# The robot was put through a sequence of maneuvers, and the distance from a
+# desired ending point was recorded in inches. This was repeated 324 times to form
+# the time series.
+# (a) Display the time series plot of the data. Based on this information, do these
+# data appear to come from a stationary or nonstationary process?
+# (b) Calculate and plot the sample ACF and PACF for these data. Based on this
+# additional information, do these data appear to come from a stationary or 
+# nonstationary process?
+# (c) Calculate and interpret the sample EACF.
+# (d) Use the best subsets ARMA approach to specify a model for these data. Compare these 
+# results with what you discovered in parts (a), (b), and (c).
+
+
+
+# A time series is said to be “stationary” if it has no trend, exhibits constant variance over time, and has a constant autocorrelation structure over time.
+# One way to test whether a time series is stationary is to perform an augmented Dickey-Fuller test, which uses the following null and alternative hypotheses:
+# H0: The time series is non-stationary. In other words, it has some time-dependent structure and does not have constant variance over time.
+# HA: The time series is stationary. If the p-value from the test is less than some significance level (e.g. α = .05), then we can reject the null hypothesis 
+# and conclude that the time series is stationary.
+# To perform an augmented Dickey-Fuller test, we can use the adf.test() function from the tseries library. 
+```{r}
+rm(list=ls(all=TRUE))
+library(TSA)
+data(robot)
+X=robot
+summary(X)
+```
+#(a) Display the time series plot of the data. Based on this information, do these data appear to come from a stationary or nonstationary process?
+## Time Series Plot
+```{r}
+ts.plot(X,main="The time series plot appears to be stationary")
+```
+## (b) Calculate and plot the sample ACF and PACF for these data. Based on this additional information, do these data appear to come from a stationary or 
+# nonstationary process? Sample ACF, PACF and EACF
+```{r}
+acf(X, main="ACF graph")
+```
+```{r}
+pacf(X, main="PACF graph")
+```
+# (c) Calculate and interpret the sample EACF.
+```{r}
+eacf(X)
+```
+# (d) Use the best subsets ARMA approach to specify a model for these data. Compare these results with what you discovered in parts (a), (b), and (c).
+# The ACF and PACF plots shows that the time series is stationary. We can confirm it with adf test.
+```{r}
+library(tseries)
+# Perform Augmented Dickey-Fuller Test
+adf.test(X) 
+```
+# stationary because p value is less than 0.05. ARMA Subset
+```{r}
+SUB=armasubsets(X,nar=5,nma=5)
+plot(SUB)
+```
+# The BIC is minimum for ARMA(1,1) model as seen in the Plot.
+```{r}
+arima(X,order=c(1,0,1),method="ML") # Fitted model ARMA(1,1)
+```
+
+
+
+
+
+
+
+
