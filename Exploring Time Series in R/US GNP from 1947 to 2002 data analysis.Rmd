@@ -1,0 +1,206 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Quarterly U.S. GNP series, Y, from 1941(first quarter) to 1991(first quarter), n =
+# 177 is given in a Excel, text, and SAS data set called “gnp”. This data set is online
+# in HW folder, and in a folder called Data.
+```{r}
+library(astsa)   # There are lots of fun data sets included in astsa
+#Seasonally adjusted quarterly U.S. GNP from 1947(1) to 2002(3).
+#help(astsa)
+#data(package = "astsa")
+```
+The data frame econ5 was used to consider the effect of quarterly GNP, 
+consumption, and government and private investment on U.S. unemployment. 
+```{r}
+gr = diff(log(econ5))
+gr = scale(gr)  # for comparable spectra
+tsplot(gr, ncol=2, col=2:6, lwd=2, byrow=FALSE)
+```
+In this case, mvspec will plot the individual spectra by default:
+```{r}
+gr.spec = mvspec(gr, spans=c(7,7), detrend=FALSE, taper=.25, col=2:6, lwd=2, main='spectra')
+```
+You can extract the spectral matrices as fxx, an array of dimensions dim = c(p,p,nfreq) 
+as well as plot coherencies and phases. Here, p = 5:
+```{r}
+round(gr.spec$fxx, 2)
+```
+```{r}
+round(var(econ5), 1)
+```
+```{r}
+gr  # As it can be seen econ5 consists of gnp column
+```
+```{r}
+data(gnp)# in astsa pckage or library we have econ5 data consists of 5 columns one of it is gnp
+plot(gnp) 
+```
+```{r}
+gnp
+```
+#  ---------------------------- Using data from 1947 to 1991
+
+In our case we have been provided excel file consists of Quarterly U.S. GNP series, Y, from 1941(first quarter) to 1991(first quarter), n =
+177 is given in a Excel, text, and SAS data set called “gnp”. This data set is online
+in HW folder, and in a folder called Data. Answer the following questions:
+```{r}
+#install.packages("readxl")
+library("readxl")
+
+Y <- read_excel("gnp2.xls")
+Y
+```
+
+```{r}
+# Plotting gnp from astsa lobrary data eco5 gnp from 1947 to 2002
+plot(gnp)
+```
+# a) Give a plot of the original series.
+```{r}
+#Plotting value of gnp from given input excel 1947 to 1991
+plot(x = Y$DATE,y = Y$gnp,
+     xlab = "x-axis",
+     ylab = "y-axis",
+     main = "Plot",
+     type='l'
+)
+```
+
+
+#b) Determine if the data needs variance stabilization and give the transformation
+#the Box-Cox procedure suggests. 
+
+```{r}
+library(MASS)
+
+boxcox(lm(Y$gnp ~ 1))
+```
+Note that the center dashed vertical line represents the estimated parameter \hat{\lambda} 
+and the others the 95% confidence interval of the estimation.
+As the plot shows that the 0 is inside the confidence interval of the optimal 
+\lambda and as the estimation of the parameter is really close to 0 in this example, 
+the best option is to apply the logarithmic transformation of the data 
+
+#Box-cox tranformation: fitting gnp to y
+```{r}
+boxcox(Y$gnp ~ Y$y)
+```
+
+
+#c) Transform the GNP series, Y , to log(Y).
+```{r}
+Y$Loggnp = log(Y$gnp)
+Y
+```
+```{r}
+plot(x = Y$DATE,y = Y$Loggnp, xlab = "x-axis", ylab = "y-axis", main = "Plot", type='l')
+```
+#d) Now, address the trend in the Box-Cox transformed series and the log(Y ) by taking 
+# simple difference of each series. Comment on the ACF of each of the differenced
+# series.
+#Box-cox tranformation: fitting gnp to y
+```{r}
+boxcox(Y$gnp ~ Y$y)
+```
+```{r}
+#fit linear regression model
+model <- lm(Y$gnp ~ Y$y)
+#find optimal lambda for Box-Cox transformation 
+bc <- boxcox(Y$gnp ~ Y$y)
+(lambda <- bc$x[which.max(bc$y)])
+model
+```
+
+```{r}
+#fit new linear regression model using the Box-Cox transformation
+new_model <- lm(((Y$y^lambda-1)/lambda) ~ Y$gnp)
+new_model
+```
+#Taking difference of Log series:
+```{r}
+diff(Y$Loggnp)
+```
+#Plotting box-cox graph for the differenced log series:
+```{r}
+boxcox(lm(diff(Y$gnp) ~ 1))
+```
+Since some of the values are negative hence can not draw box-cox graph. Now let's
+see the ACF graph for the gnp:
+```{r}
+acf(Y$gnp)
+```
+# ACF graph for the Log gnp:
+```{r}
+acf(Y$Loggnp)
+```
+# ACF graph for the differenced Log gnp:
+```{r}
+acf(diff(Y$Loggnp))
+```
+Which is much stable than previous two graphs.
+
+Now check out the ACF for the box cox transformed series
+```{r}
+acf(new_model$residuals, main="ACF for Box Cox transformed series")
+```
+# ACF of Differenced box-cox transformed series:
+```{r}
+acf(diff(new_model$residuals), main="ACF for differenced Box Cox transformed series")
+```
+compared to differenced log series this one seems less stable.
+
+
+#e) Plot the histogram (overlay the appropriate normal distribution) and Q-Q plot
+#of each of the transformed & simple-differenced series. Comment on these.
+```{r}
+#define plotting area
+op <- par(pty = "s", mfrow = c(1, 2))
+#Now checking the histograms of box-cox tranformed series:
+hist(new_model$residuals)
+# Histogram of differenced box-cox transformed series:
+hist(diff(new_model$residuals))
+#display both histograms
+par(op)
+```
+```{r}
+#define plotting area
+op <- par(pty = "s", mfrow = c(1, 2))
+# Histogram for Log transformed GNP
+hist(Y$Loggnp)
+# Histogram of differenced Log transformed GNP
+hist(diff(Y$Loggnp))
+
+#display both Histograms
+par(op)
+```
+```{r}
+#define plotting area
+op <- par(pty = "s", mfrow = c(1, 2))
+
+#Q-Q plot for original model
+qqnorm(model$residuals)
+qqline(model$residuals)
+
+#Q-Q plot for Box-Cox transformed model
+qqnorm(new_model$residuals)
+qqline(new_model$residuals)
+
+#display both Q-Q plots
+par(op)
+```
+# Propose at least three good ARIMA models and discuss (i) parameter estimation, (ii) AIC and SBC (BIC) numbers, 
+# (iii) residual analysis (e.g., Q-Q plot, Ljung-Box-Pierce Test) and the whole
+# To check MA side let's draw PACF as well along with ACF of difference log data
+```{r}
+#define plotting area
+op <- par(pty = "s", mfrow = c(1, 2))
+# Histogram for Log transformed GNP
+acf(diff(Y$Loggnp))
+# Histogram of differenced Log transformed GNP
+pacf(diff(Y$Loggnp))
+#display both Histograms
+par(op)
+```

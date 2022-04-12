@@ -1,0 +1,83 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+# Yogesh Awdhut Gadade
+# Date: 11th April 2022
+# Robot Data Analysis
+
+#The data file named robot contains a time series obtained from an industrial robot.
+#The robot was put through a sequence of maneuvers, and the distance from a
+#desired ending point was recorded in inches. This was repeated 324 times to form
+#the time series.
+```{r}
+library(TSA)
+rm(list=ls(all=TRUE))
+data(robot)
+```
+```{r}
+plot(robot, main="Time Series Plot of the industrial robot data")
+```
+# Comment: The time series plot appears to be stationary.
+```{r}
+summary(robot)
+```
+# Sample ACF, PACF and EACF
+```{r}
+acf(robot)
+```
+```{r}
+pacf(robot)
+```
+```{r}
+eacf(robot)
+```
+# Comment: The ACF and PACF plots shows that the time series is
+# stationary. We can confirm it with adf test.
+```{r}
+#Augmented Dickey-Fuller (ADF) Test in R
+#H0: The time series is non-stationary. In other words, it has some time-dependent structure 
+#and does not have constant variance over time.
+#HA: The time series is stationary.
+library(tseries)
+adf.test(robot) # stationary because p value is less than 0.05
+```
+```{r}
+## ARMA Subset
+SUB=armasubsets(robot,nar=5,nma=5)
+plot(SUB)
+```
+# Comment: The BIC is minimum for ARMA(1,1) model as seen in the Plot.
+
+# (a) Estimate the parameters of an AR(1) model for these data.
+```{r}
+# Fitting AR(1)
+arima(robot, order = c(1,0,0))
+```
+#(b) Estimate the parameters of an IMA(1,1) model for these data.
+```{r}
+# Fitting ARIMA
+arima(robot, order = c(0,1,1))
+```
+#(c) Compare the results from parts (a) and (b) in terms of AIC.
+
+#As it can be seen that the values of AIC for AR(1) is -2947.08 and for IMA(1, 1) is -2959.9 
+#which is slightly different and more in case of IMA(1, 1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

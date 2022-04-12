@@ -1,0 +1,219 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+#Yogesh Awdhut Gadade
+#Date: 11th April 2022
+
+# --------------------- Simulation of MA(1) ------------
+
+# Simulate an MA(1) series with theta = 0.8 and n = 48.
+#(a) Find the method-of-moments estimate of theta?.
+```{r}
+rm(list = ls())  # clear all variables in workspace
+graphics.off()  # clear all plots
+set.seed(333);  
+
+#Now lets generate a MA(1) process and store the values in an object that we call series.
+series=arima.sim(n=48,list(order=c(0, 0, 1), ma=0.8))
+plot(series)
+```
+# Below is a function that computes the method of moments estimator of
+# the MA(1) coefficient of an MA(1) model.
+```{r}
+# Method 1  method of moments estimator
+estimate.ma1.mom=function(x)
+{
+r=acf(x,plot=F)$acf[2]
+if (abs(r)<0.5)
+return((-1+sqrt(1-4*r^2))/(2*r)) else return(NA)
+}
+estimate.ma1.mom(series)
+```
+
+```{r}
+# Method 2  method of moments estimator
+arima(series, method=c("CSS-ML"))
+```
+#(b) Find the conditional least squares estimate of theta and compare it with part (a).
+```{r}
+# Method 1 least squares estimate
+arima(series,order=c(0,0,1),method='CSS')
+```
+```{r}
+# Method 2 least squares estimate
+arima(series, order=c(0, 0, 1), method=c("CSS-ML"), include.mean=FALSE)
+```
+#(c) Find the maximum likelihood estimate of theta? and compare it with parts (a) and (b).
+```{r}
+# Method 1:
+arima(series,order=c(0,0,1),method='ML')
+```
+```{r}
+# Method 2:
+arima(series, order=c(0, 0, 1), method=c("ML"), include.mean = FALSE)
+```
+# Observation:
+Among three methods we observed that the s.e. of the parameter estimate is more in 
+case of method of moments and appropriately same in case of least square and 
+maximum likelihood estimate.
+
+# (d) Display the sample ACF of the series. Is an MA(1) model suggested?
+```{r}
+acf(series)
+```
+# Observation: It seem MA(1) model is not suggested based on ACF plot above since 
+# two bars going out side of confidance interval
+
+
+#(e) Repeat parts (a), (b), and (c) with a new simulated series for 500 times by
+#using the same parameters and same sample size. Take the average results of 500
+#iteration, and then compare your results with your results from the first simulation.
+
+```{r}
+set.seed(1352); 
+thetahat=rep(NA,500)
+for (k in 1:500) {series=arima.sim(n=48,list(ma=0.6));
+thetahat[k]=-arima(series,order=c(0,0,1),method='ML')$coef[1]}
+```
+
+```{r}
+# Method 1  method of moments estimator
+estimate.ma1.mom=function(x)
+{
+r=acf(x,plot=F)$acf[2]
+if (abs(r)<0.5)
+return((-1+sqrt(1-4*r^2))/(2*r)) else return(NA)
+}
+estimate.ma1.mom(thetahat)
+```
+```{r}
+# Method 2  method of moments estimator
+arima(thetahat, method=c("CSS-ML"))
+```
+```{r}
+# Method 1 least squares estimate
+arima(thetahat,order=c(0,0,1),method='CSS')
+```
+```{r}
+# Method 2 least squares estimate
+arima(thetahat, order=c(0, 0, 1), method=c("CSS-ML"), include.mean=FALSE)
+```
+```{r}
+# Method 1:
+arima(thetahat,order=c(0,0,1),method='ML')
+```
+```{r}
+# Method 2:
+arima(thetahat, order=c(0, 0, 1), method=c("ML"), include.mean = FALSE)
+```
+
+#f) Calculate the variance of your sampling distribution and compare it with the
+#large-sample result in Equation (7.4.11), page 161.
+#Form the sampling distribution of the maximum likelihood estimates of theta is:
+```{r}
+hist(thetahat)
+```
+# Let's check Are the estimates (approximately) unbiased:
+```{r}
+mean(thetahat)
+```
+#Calculating the variance of above sampling distribution and comparing it with the large-sample result in Equation
+#(7.4.11), page 161.
+```{r}
+sd(thetahat)^2
+```
+
+
+
+
+
+
+# ---------------------  Simulation of AR series
+
+Simulate an AR(1) series with theta = 0.8 and n = 48.
+
+```{r}
+rm(list = ls())  # clear all variables in workspace
+graphics.off()  # clear all plots
+
+set.seed(333);  
+
+#Now lets generate a MA(1) process and store the values in an object that we call series.
+series=arima.sim(n=48,list(order=c(1, 0, 0), ar=0.8))
+
+plot(series)
+
+```
+# a) Find the method-of-moments estimate of ?.
+```{r}
+acf(series)$acf[2]
+```
+# b) Find the conditional least squares estimate of ? and compare it with part (a).
+```{r}
+arima(series,order=c(1,0,0),method='CSS')$coef[1]
+```
+# c) Find the maximum likelihood estimate of ? and compare it with parts (a) and (b).
+```{r}
+arima(series,order=c(1,0,0),method='ML')$coef[1]
+```
+
+
+# ---------------------- ARMA(1, 1) simulation ----------------
+
+# Simulate an ARMA(1, 1) series with phi = 0.7, theta = 0.4, and n = 72.
+```{r}
+set.seed(333) 
+series=arima.sim(n=72,list(ar=0.7,ma=-0.4))
+```
+#(a) Find the method-of-moments estimates of phi and theta.
+```{r}
+acf(series)$acf
+```
+#(b) Find the conditional least squares estimates of phi and theta and compare them with part (a).
+```{r}
+arima(series,order=c(1,0,1),method='CSS')
+```
+#(c) Find the maximum likelihood estimates of phi and theta and compare them with parts (a) and (b).
+```{r}
+arima(series,order=c(1,0,1),method='ML')
+```
+#(d) Display the sample EACF of the series. Is an ARMA(1,1) model suggested?
+```{r}
+#define plotting area
+op <- par(pty = "s", mfrow = c(1, 2))
+acf(series)
+pacf(series)
+#display both histograms
+par(op)
+```
+```{r}
+library(TSA)
+eacf(series)
+```
+
+#(e) Repeat parts (a), (b), and (c) with a new simulated series for 500 times using
+#the same parameters and same sample size. ake the average results of 500 iteration,
+#and then compare these results to your results from the first simulation.
+```{r}
+set.seed(333); 
+serRepeat=rep(NA,500)
+for (k in 1:500) {series=arima.sim(n=72,list(ar=0.7, ma=-0.4));
+serRepeat[k]=-arima(series,order=c(0,0,1),method='ML')$coef[1]}
+```
+#Find the method-of-moments estimates of phi and theta.
+```{r}
+acf(series)$acf
+```
+#Find the conditional least squares estimates of phi and theta and compare them with part (a).
+```{r}
+arima(series,order=c(1,0,1),method='CSS')
+```
+#Find the maximum likelihood estimates of phi and theta and compare them with parts (a) and (b).
+```{r}
+arima(series,order=c(1,0,1),method='ML')
+```
+
+
+
+
