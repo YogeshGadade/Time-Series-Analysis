@@ -1,0 +1,161 @@
+---
+title: "R Notebook"
+output: html_notebook
+Goal: Implementing Threshold Models
+---
+
+# Threshold models are used in several different areas of statistics, not just time series. 
+# The general idea is that a process may behave differently when the values of a variable 
+# exceed a certain threshold.That is, a different model may apply when values are greater 
+# than a threshold than when they are below the threshold.
+# In drug toxicology applications, for example, it may be that all doses below a threshold 
+# amount are safe whereas there is increasing toxicity as the dose is increased above the 
+# threshold amount. Or, in an animal population abundance study, the population may slowly 
+# increase up to a threshold size but then may rapidly decrease (due to limited food) once 
+# the population exceeds a certain size.
+
+# Threshold models are a special case of regime switching models (RSM). In RSM modeling, 
+# different models apply to different intervals of values of some key variable(s).
+
+
+```{r}
+library(TSA)
+data("spots")
+spots
+```
+```{r}
+#Square Root Transformation: Transform the response variable from y to √y.
+sqrt_y = sqrt(spots)
+sqrt_y
+```
+```{r}
+plot(spots, main="Original: Monthly amount of sunspots")
+```
+
+```{r}
+plot(sqrt_y, main="Square Root Transformed Monthly amount of sunspots")
+```
+```{r}
+acf(spots)
+# The plot above shows the amount of sunspots has periodical performance in general 
+# during these years. Also the data seems to have trend. 
+```
+
+```{r}
+acf(sqrt_y)
+```
+```{r}
+pacf(spots)
+```
+```{r}
+pacf(sqrt_y)
+```
+
+```{r}
+#Estimation of a threshold autoregressive models (TAR) model 
+#Threshold Autoregressive Models (TAR): In a TAR model, AR models are estimated separately in two or more intervals of values as defined by the dependent variable. These AR models may or may not be of the same order. For convenience, it’s often assumed that they are of the same order.
+spots.tar.1=tar(y=sqrt_y,p1=4,p2=4,d=3,a=.1,b=.9,print=TRUE)
+```
+As it can be observed that the SETAR(2, 2 , 4 ) model delay = 3 having estimated threshold as 6.595. This estimated threshold is the 38.6 percentile of
+all data. Also the Residual Standard Error is 0.937
+```{r}
+tar(y=sqrt_y,p1=1,p2=4,d=3,a=.1,b=.9,print=TRUE, method="CLS") # re-do the estimation using the CLS method
+```
+Now using the method CLS. In this case it can be observed that the SETAR(2, 1 , 4 ) model delay = 3 having estimated threshold as 4.266. This estimated threshold is the 9 percentile of all data. Also the Residual Standard Error is 0.8576
+
+```{r}
+tar(y=sqrt_y,p1=4,p2=4,d=3,a=.1,b=.9,print=TRUE, method="CLS") # The CLS method does not estimate AR orders
+```
+```{r}
+tar.skeleton(spots.tar.1)
+```
+
+# Que4: Simulate a series of size 1000 from the TAR model fitted to the relative
+#sunspot data. Compute the spectrum of the simulated realization and com-
+#pare it with the spectrum of the data. Does the fitted model capture the
+#correlation structure of the data?
+```{r}
+set.seed(333)
+#Simulate a two-regime TAR model.
+y=tar.sim(spots.tar.1,   n=100,    Phi1=c(0,0.5),
+          Phi2=c(0,-1.8),p=1, d=1, sigma1=1,  
+          thd=-1,        sigma2=2)$y
+plot(y=y,x=1:100,type='b',xlab="t",ylab=expression(Y[t]))
+# ntransient: the burn-in size
+# n: sample size of the simulated series
+```
+```{r}
+#Freqency domain analysis: Find the frequency
+spec=spectrum(y,spans=c(5,5))
+```
+```{r}
+spec$freq[which.max(spec$spec)]
+```
+From the spectrum plot, we can tell the dominant frequency is 0.1. Also the error bar of the maximum peak 
+includes the basis of the peak, indicating that we can accept the null hypothesis that the variance 
+with the frequency of 0.1 is a not a random fluctuation.
+
+```{r}
+#Investigate the trend
+index=seq(from=1, to=length(y))
+lo=loess(y~index,span=0.5)
+y.low <- ts(loess(y~index,span=0.5)$fitted,frequency=128)
+y.hi <- ts(y-loess(y~index,span=0.05)$fitted,frequency=128)
+y.cycles <- y - y.hi - y.low
+plot(ts.union(y, y.low,y.hi,y.cycles),
+     main="Decomposition of sunspots amount as trend + noise + cycles")
+```
+The plot above shows that, we have an decreasing non-linear trend. And there are a significant 
+fluctuation. In the high-range domain, we can find out that we extract the seasonal pattern successfully.
+
+```{r}
+
+aic_table <- function(data,P,Q){
+  table <- matrix(NA,(P+1),(Q+1))
+  for(p in 0:P) {
+    for(q in 0:Q) {
+       table[p+1,q+1] <- arima(data, xreg = index,order=c(p,0,q))$aic
+    }
+  }
+  dimnames(table) <- list(paste("<b> AR",0:P, "</b>", sep=""),paste("MA",0:Q,sep=""))
+  table
+}
+price_aic_table <- aic_table(y,4,4)
+require(knitr)
+kable(price_aic_table,digits=2)
+```
+# The best model is ARIMA(2,0,2). 
+
+```{r}
+arma21 <- arima(y, , xreg = index,order = c(2,0,2));arma21
+
+```
+
+```{r}
+ma_roots <- polyroot(c(1,-coef(arma21)[c("ma1","ma2")]))
+ma_roots
+```
+#All the AR and MA parameters are out of the unit circle, indicating the model is invertibal and casaul.
+
+
+# Sources:
+# sqrt transformmation: https://www.statology.org/transform-data-in-r/
+# https://www.rdocumentation.org/packages/TSA/versions/1.3/topics/tar
+# https://r-data.pmagunia.com/dataset/r-dataset-package-datasets-sunspots
+# https://books.google.com/books?id=bHke2k-QYP4C&pg=PA420&lpg=PA420&dq=Fit+a+TAR+model+to+the+square-root-transformed+relative+sunspot+data,+and+examine+its+goodness+of+fit.+Interpret+the+fitted+TAR+model.+(The+data+file+is+named+spots.)&source=bl&ots=aUf4OKKOn1&sig=ACfU3U0ywC8_5xcrpFAgs-FFjjlNfWcDBw&hl=en&sa=X&ved=2ahUKEwjt4oer7sD3AhXuhIkEHVv2DuUQ6AF6BAgCEAM#v=onepage&q=Fit%20a%20TAR%20model%20to%20the%20square-root-transformed%20relative%20sunspot%20data%2C%20and%20examine%20its%20goodness%20of%20fit.%20Interpret%20the%20fitted%20TAR%20model.%20(The%20data%20file%20is%20named%20spots.)&f=false
+# https://ionides.github.io/531w18/midterm_project/project9/531mid.html
+# https://online.stat.psu.edu/stat510/lesson/13/13.2
+
+
+
+
+
+
+
+
+
+
+
+
+
+

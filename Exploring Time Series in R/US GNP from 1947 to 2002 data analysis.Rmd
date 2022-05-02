@@ -6,12 +6,14 @@ output: html_notebook
 # Quarterly U.S. GNP series, Y, from 1941(first quarter) to 1991(first quarter), n =
 # 177 is given in a Excel, text, and SAS data set called “gnp”. This data set is online
 # in HW folder, and in a folder called Data.
+
 ```{r}
 library(astsa)   # There are lots of fun data sets included in astsa
 #Seasonally adjusted quarterly U.S. GNP from 1947(1) to 2002(3).
 #help(astsa)
 #data(package = "astsa")
 ```
+
 The data frame econ5 was used to consider the effect of quarterly GNP, 
 consumption, and government and private investment on U.S. unemployment. 
 ```{r}
